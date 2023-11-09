@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zewi-api
-  namespace: zewi
+  namespace: staging
   labels:
     app: zewi-api
 spec:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: zewi-api
-        image: clivern/zewi:v0.2.0
+        image: clivern/zewi:v0.3.0
         imagePullPolicy: IfNotPresent
         command: ["/app/entrypoint.sh"]
         args: ["api", "/app/configs/config.yml"]

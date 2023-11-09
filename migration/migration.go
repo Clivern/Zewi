@@ -80,7 +80,13 @@ func (m *Manager) createMigrationsTable() error {
 // isApplied checks if a migration version has been applied
 func (m *Manager) isApplied(version string) (bool, error) {
 	var count int
-	err := m.db.QueryRow("SELECT COUNT(*) FROM migrations WHERE version = ?", version).Scan(&count)
+	var query string
+	if m.driver == "postgres" || m.driver == "postgresql" {
+		query = "SELECT COUNT(*) FROM migrations WHERE version = $1"
+	} else {
+		query = "SELECT COUNT(*) FROM migrations WHERE version = ?"
+	}
+	err := m.db.QueryRow(query, version).Scan(&count)
 	if err != nil {
 		return false, fmt.Errorf("failed to check migration status: %w", err)
 	}
@@ -89,8 +95,14 @@ func (m *Manager) isApplied(version string) (bool, error) {
 
 // recordMigration records a migration as applied
 func (m *Manager) recordMigration(version, description string) error {
+	var query string
+	if m.driver == "postgres" || m.driver == "postgresql" {
+		query = "INSERT INTO migrations (version, description, applied_at) VALUES ($1, $2, $3)"
+	} else {
+		query = "INSERT INTO migrations (version, description, applied_at) VALUES (?, ?, ?)"
+	}
 	_, err := m.db.Exec(
-		"INSERT INTO migrations (version, description, applied_at) VALUES (?, ?, ?)",
+		query,
 		version,
 		description,
 		time.Now().UTC(),
@@ -103,7 +115,13 @@ func (m *Manager) recordMigration(version, description string) error {
 
 // removeMigration removes a migration record
 func (m *Manager) removeMigration(version string) error {
-	_, err := m.db.Exec("DELETE FROM migrations WHERE version = ?", version)
+	var query string
+	if m.driver == "postgres" || m.driver == "postgresql" {
+		query = "DELETE FROM migrations WHERE version = $1"
+	} else {
+		query = "DELETE FROM migrations WHERE version = ?"
+	}
+	_, err := m.db.Exec(query, version)
 	if err != nil {
 		return fmt.Errorf("failed to remove migration record: %w", err)
 	}

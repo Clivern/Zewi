@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: zewi-platform
-  namespace: zewi
+  namespace: staging
   labels:
     app: zewi-platform
 spec:

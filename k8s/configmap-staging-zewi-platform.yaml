@@ -15,7 +15,7 @@ data:
         crt_path: cert/server.crt
         key_path: cert/server.key
       timeout: 50
-      api_base_url: http://zewi-api:8002
+      api_base_url: http://zewi-api.zewi.svc.cluster.local:8002
       metrics:
         username: admin
         secret: secret

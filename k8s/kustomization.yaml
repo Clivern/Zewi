@@ -1,10 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: zewi
+namespace: staging
 
 resources:
   - namespace.yaml
+  - zewi-db-secret.yaml
   - configmap-staging-zewi-api.yaml
   - configmap-staging-zewi-landing.yaml
   - configmap-staging-zewi-platform.yaml
