@@ -1,0 +1,27 @@
+# Temporary pod for exploring internal services DNS.
+# Apply when needed: kubectl apply -f dns-debug-pod.yaml
+# Exec into it: kubectl exec -it dns-debug -n staging -- sh
+# wget -qO- http://zewi-hostname.staging.svc.cluster.local:8003
+# Delete when done: kubectl delete pod dns-debug -n staging
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-debug
+  namespace: staging
+  labels:
+    app: dns-debug
+spec:
+  restartPolicy: Never
+  containers:
+  - name: dns-debug
+    image: busybox:1.36
+    command: ["sh", "-c", "sleep infinity"]
+    stdin: true
+    tty: true
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"

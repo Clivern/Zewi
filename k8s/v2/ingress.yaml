@@ -8,6 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
+  # kubectl get ingress -n staging
   ingressClassName: nginx
   rules:
   - host: hn-zewi.ziee.io
