@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zewi-hostname
+  namespace: staging
+  labels:
+    app: zewi-hostname
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: zewi-hostname
+  template:
+    metadata:
+      labels:
+        app: zewi-hostname
+    spec:
+      containers:
+      - name: zewi-hostname
+        image: clivern/zewi:v0.5.0
+        imagePullPolicy: IfNotPresent
+        command: ["/app/entrypoint.sh"]
+        args: ["hostname", "/app/configs/config.yml"]
+        ports:
+        - containerPort: 8003
+          name: http
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /app/configs
+        - name: cache
+          mountPath: /app/cache
+        - name: logs
+          mountPath: /app/var/logs
+        livenessProbe:
+          httpGet:
+            path: /_health
+            port: 8003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /_ready
+            port: 8003
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+      - name: config
+        configMap:
+          name: zewi-hostname-config
+      - name: cache
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
