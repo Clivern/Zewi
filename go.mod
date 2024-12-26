@@ -1,6 +1,6 @@
 module github.com/clivern/zewi
 
-go 1.24.11
+go 1.24.12
 
 require (
 	github.com/drone/envsubst v1.0.3
