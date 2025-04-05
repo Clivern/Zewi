@@ -22,6 +22,11 @@ import (
 func SetupLogging() error {
 	var writer io.Writer
 
+	hostname, _ := os.Hostname()
+	if hostname == "" {
+		hostname = "unknown"
+	}
+
 	if viper.GetString("app.log.output") != "stdout" {
 		dir, _ := filepath.Split(viper.GetString("app.log.output"))
 
@@ -54,9 +59,9 @@ func SetupLogging() error {
 	}
 
 	if viper.GetString("app.log.format") == "json" {
-		log.Logger = zerolog.New(writer).With().Timestamp().Logger()
+		log.Logger = zerolog.New(writer).With().Str("hostname", hostname).Timestamp().Logger()
 	} else {
-		log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: writer}).With().Timestamp().Logger()
+		log.Logger = zerolog.New(zerolog.ConsoleWriter{Out: writer}).With().Str("hostname", hostname).Timestamp().Logger()
 	}
 
 	level := strings.ToLower(viper.GetString("app.log.level"))

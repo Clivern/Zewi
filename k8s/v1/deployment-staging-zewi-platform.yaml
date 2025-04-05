@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: zewi-platform
-        image: clivern/zewi:v0.5.0
+        image: clivern/zewi:v0.6.0
         imagePullPolicy: IfNotPresent
         command: ["/app/entrypoint.sh"]
         args: ["platform", "/app/configs/config.yml"]

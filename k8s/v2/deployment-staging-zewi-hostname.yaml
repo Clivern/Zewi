@@ -6,7 +6,7 @@ metadata:
   labels:
     app: zewi-hostname
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: zewi-hostname
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: zewi-hostname
-        image: clivern/zewi:v0.5.0
+        image: clivern/zewi:v0.6.0
         imagePullPolicy: IfNotPresent
         command: ["/app/entrypoint.sh"]
         args: ["hostname", "/app/configs/config.yml"]
