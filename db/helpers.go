@@ -52,6 +52,18 @@ func GetDB() *sql.DB {
 	return globalConnection.DB
 }
 
+// GetDriver returns the database driver type
+func GetDriver() string {
+	mu.RLock()
+	defer mu.RUnlock()
+
+	if globalConnection == nil {
+		return ""
+	}
+
+	return globalConnection.Driver
+}
+
 // CloseDB closes the global database connection
 func CloseDB() error {
 	mu.Lock()

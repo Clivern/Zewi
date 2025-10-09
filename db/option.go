@@ -20,33 +20,44 @@ type Option struct {
 
 // OptionRepository handles database operations for options.
 type OptionRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	driver string
 }
 
 // NewOptionRepository creates a new option repository.
 func NewOptionRepository(db *sql.DB) *OptionRepository {
-	return &OptionRepository{db: db}
+	return &OptionRepository{
+		db:     db,
+		driver: GetDriver(),
+	}
 }
 
 // Create inserts a new option into the database.
 func (r *OptionRepository) Create(key, value string) error {
-	_, err := r.db.Exec(
-		"INSERT INTO options (key, value) VALUES (?, ?)",
-		key,
-		value,
-	)
+	var query string
+	if r.driver == "postgres" || r.driver == "postgresql" {
+		query = "INSERT INTO options (key, value) VALUES ($1, $2)"
+	} else {
+		query = "INSERT INTO options (key, value) VALUES (?, ?)"
+	}
+	_, err := r.db.Exec(query, key, value)
 	return err
 }
 
 // Get retrieves an option by key.
 func (r *OptionRepository) Get(key string) (*Option, error) {
 	option := &Option{}
-	err := r.db.QueryRow(
-		`SELECT id, key, value, created_at, updated_at
+	var query string
+	if r.driver == "postgres" || r.driver == "postgresql" {
+		query = `SELECT id, key, value, created_at, updated_at
 		FROM options
-		WHERE key = ?`,
-		key,
-	).Scan(
+		WHERE key = $1`
+	} else {
+		query = `SELECT id, key, value, created_at, updated_at
+		FROM options
+		WHERE key = ?`
+	}
+	err := r.db.QueryRow(query, key).Scan(
 		&option.ID,
 		&option.Key,
 		&option.Value,
@@ -65,20 +76,29 @@ func (r *OptionRepository) Get(key string) (*Option, error) {
 
 // Update updates an option value.
 func (r *OptionRepository) Update(key, value string) error {
-	_, err := r.db.Exec(
-		`UPDATE options SET
+	var query string
+	if r.driver == "postgres" || r.driver == "postgresql" {
+		query = `UPDATE options SET
+			value = $1, updated_at = $2
+		WHERE key = $3`
+	} else {
+		query = `UPDATE options SET
 			value = ?, updated_at = ?
-		WHERE key = ?`,
-		value,
-		time.Now().UTC(),
-		key,
-	)
+		WHERE key = ?`
+	}
+	_, err := r.db.Exec(query, value, time.Now().UTC(), key)
 	return err
 }
 
 // Delete removes an option from the database.
 func (r *OptionRepository) Delete(key string) error {
-	_, err := r.db.Exec("DELETE FROM options WHERE key = ?", key)
+	var query string
+	if r.driver == "postgres" || r.driver == "postgresql" {
+		query = "DELETE FROM options WHERE key = $1"
+	} else {
+		query = "DELETE FROM options WHERE key = ?"
+	}
+	_, err := r.db.Exec(query, key)
 	return err
 }
 

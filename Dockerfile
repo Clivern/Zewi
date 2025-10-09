@@ -1,6 +1,6 @@
 FROM golang:1.25.5
 
-ARG ZEWI_VERSION=0.3.0
+ARG ZEWI_VERSION=0.4.0
 
 RUN mkdir -p /app/configs
 RUN mkdir -p /app/var/logs

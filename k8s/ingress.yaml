@@ -4,11 +4,14 @@ metadata:
   name: zewi-ingress
   namespace: staging
   annotations:
+    # Disable HTTPS redirect - use HTTP only
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: nginx
   rules:
-  - host: zewi.app
+  - host: zewi.ziee.io
     http:
       paths:
       - path: /
@@ -18,7 +21,7 @@ spec:
             name: zewi-landing
             port:
               number: 8000
-  - host: platform.zewi.app
+  - host: platform-zewi.ziee.io
     http:
       paths:
       - path: /
@@ -28,7 +31,7 @@ spec:
             name: zewi-platform
             port:
               number: 8001
-  - host: api.zewi.app
+  - host: api-zewi.ziee.io
     http:
       paths:
       - path: /
