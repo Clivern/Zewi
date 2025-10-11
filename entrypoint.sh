@@ -14,8 +14,8 @@ SERVICE=$1
 CONFIG_FILE=$2
 
 # Validate service type
-if [ "$SERVICE" != "api" ] && [ "$SERVICE" != "platform" ] && [ "$SERVICE" != "landing" ]; then
-    echo "Error: service must be one of: api, platform, landing"
+if [ "$SERVICE" != "api" ] && [ "$SERVICE" != "platform" ] && [ "$SERVICE" != "landing" ] && [ "$SERVICE" != "hostname" ]; then
+    echo "Error: service must be one of: api, platform, landing, hostname"
     exit 1
 fi
 
@@ -27,9 +27,14 @@ fi
 
 echo "Starting Zewi $SERVICE with config: $CONFIG_FILE"
 
-# Run migrations
-echo "Running database migrations..."
-./zewi migrate up -c "$CONFIG_FILE"
+# Show version
+./zewi version
+
+# Run migrations only for services that need database
+if [ "$SERVICE" = "api" ]; then
+    echo "Running database migrations..."
+    ./zewi migrate up -c "$CONFIG_FILE"
+fi
 
 # Start the service
 echo "Starting $SERVICE service..."
