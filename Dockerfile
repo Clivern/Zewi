@@ -1,6 +1,6 @@
 FROM golang:1.25.5
 
-ARG ZEWI_VERSION=0.1.0
+ARG ZEWI_VERSION=0.2.0
 
 RUN mkdir -p /app/configs
 RUN mkdir -p /app/var/logs
@@ -13,12 +13,14 @@ RUN rm LICENSE
 RUN rm README.md
 
 COPY ./config.dist.yml /app/configs/
+COPY ./entrypoint.sh /app/entrypoint.sh
 
 EXPOSE 8080
 
 VOLUME /app/configs
 VOLUME /app/var
 
-RUN ./zewi version
+RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/zewi
 
-CMD ["./zewi", "server", "-c", "/app/configs/config.dist.yml"]
+CMD ["/app/entrypoint.sh", "api", "/app/configs/config.dist.yml"]

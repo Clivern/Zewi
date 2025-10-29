@@ -4,12 +4,21 @@ metadata:
   name: zewi-ingress
   namespace: zewi
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-  - host: zewi.local
+  - host: zewi.app
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: zewi-landing
+            port:
+              number: 8000
+  - host: platform.zewi.app
     http:
       paths:
       - path: /
@@ -18,11 +27,14 @@ spec:
           service:
             name: zewi-platform
             port:
-              number: 8000
-      - path: /api
+              number: 8001
+  - host: api.zewi.app
+    http:
+      paths:
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: zewi-api
             port:
-              number: 8001
+              number: 8002
