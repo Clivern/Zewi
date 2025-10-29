@@ -17,10 +17,38 @@ spec:
     spec:
       containers:
       - name: zewi-platform
-        image: clivern/zewi:v0.1.0
+        image: clivern/zewi:v0.2.0
         imagePullPolicy: IfNotPresent
-        command: ["./zewi"]
-        args: ["platform", "-c", "/app/configs/config.yml"]
+        command: ["/app/entrypoint.sh"]
+        args: ["platform", "/app/configs/config.yml"]
+        env:
+        - name: ZEWI_DATABASE_DRIVER
+          value: "postgresql"
+        - name: ZEWI_DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: zewi-db-secret
+              key: host
+        - name: ZEWI_DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: zewi-db-secret
+              key: port
+        - name: ZEWI_DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: zewi-db-secret
+              key: username
+        - name: ZEWI_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: zewi-db-secret
+              key: password
+        - name: ZEWI_DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: zewi-db-secret
+              key: database
         ports:
         - containerPort: 8001
           name: http

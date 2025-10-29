@@ -24,12 +24,12 @@ data:
         output: stdout
         format: json
       database:
-        driver: postgresql
-        host: localhost
-        port: 5432
-        username: postgres
-        password: postgres
-        name: zewi
+        driver: ${ZEWI_DATABASE_DRIVER:-postgresql}
+        host: ${ZEWI_DATABASE_HOST:-localhost}
+        port: ${ZEWI_DATABASE_PORT:-5432}
+        username: ${ZEWI_DATABASE_USERNAME:-postgres}
+        password: ${ZEWI_DATABASE_PASSWORD:-postgres}
+        name: ${ZEWI_DATABASE_NAME:-zewi}
         max_open_conns: 25
         max_idle_conns: 10
         conn_max_lifetime: 300
