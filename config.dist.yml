@@ -1,0 +1,49 @@
+# Server configs
+app:
+  # Server name
+  name: ${ZEWI_SERVER_NAME:-zewi}
+  # Env mode (dev or prod)
+  mode: ${ZEWI_SERVER_MODE:-prod}
+  # HTTP port
+  port: ${ZEWI_SERVER_PORT:-8000}
+  # Hostname
+  hostname: ${ZEWI_SERVER_HOSTNAME:-127.0.0.1}
+  # TLS configs
+  tls:
+    status: ${ZEWI_SERVER_TLS_STATUS:-off}
+    crt_path: ${ZEWI_SERVER_TLS_PEMPATH:-cert/server.crt}
+    key_path: ${ZEWI_SERVER_TLS_KEYPATH:-cert/server.key}
+
+  # Global timeout
+  timeout: ${ZEWI_SERVER_TIMEOUT:-50}
+
+  # Prometheus metrics endpoint
+  metrics:
+    username: ${ZEWI_SERVER_PROM_METRICS_USERNAME:-admin}
+    secret: ${ZEWI_SERVER_PROM_METRICS_SECRET:-secret}
+
+  # Log configs
+  log:
+    # Log level, it can be debug, info, warn, error, panic, fatal
+    level: ${ZEWI_SERVER_LOG_LEVEL:-debug}
+    # Output can be stdout or abs path to log file /var/logs/zewi.log
+    output: ${ZEWI_SERVER_LOG_OUTPUT:-stdout}
+    # Format can be json
+    format: ${ZEWI_SERVER_LOG_FORMAT:-json}
+
+  # Database configs
+  database:
+    # Database driver (postgres, postgresql, or sqlite)
+    driver: ${ZEWI_DATABASE_DRIVER:-sqlite}
+    # PostgreSQL specific configs
+    host: ${ZEWI_DATABASE_HOST:-localhost}
+    port: ${ZEWI_DATABASE_PORT:-5432}
+    username: ${ZEWI_DATABASE_USERNAME:-postgres}
+    password: ${ZEWI_DATABASE_PASSWORD:-postgres}
+    name: ${ZEWI_DATABASE_NAME:-zewi}
+    # Connection pool settings
+    max_open_conns: ${ZEWI_DATABASE_MAX_OPEN_CONNS:-25}
+    max_idle_conns: ${ZEWI_DATABASE_MAX_IDLE_CONNS:-10}
+    conn_max_lifetime: ${ZEWI_DATABASE_CONN_MAX_LIFETIME:-300}
+    # SQLite specific config (path to database file)
+    datasource: ${ZEWI_DATABASE_DATASOURCE:-./cache/zewi.db}

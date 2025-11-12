@@ -1,0 +1,34 @@
+name: Publish Docker Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v6
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@916386b00027d425839f8da46d302dab33f5875b
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@ed95091677497158a9ff38b314264cd965388d5e
+        with:
+          images: clivern/zewi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@64c9b141502b80dbbd71e008a0130ad330f480f8
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
