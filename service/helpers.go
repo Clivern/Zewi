@@ -5,7 +5,6 @@
 package service
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -22,12 +21,10 @@ func WriteJSON(w http.ResponseWriter, statusCode int, data interface{}) error {
 	return nil
 }
 
-// CalculateDataChecksum calculates the SHA256 checksum of the given data
-func CalculateDataChecksum(data interface{}) (string, error) {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return "", err
+// DecodeJSON decodes JSON from request body
+func DecodeJSON(r *http.Request, v interface{}) error {
+	if err := json.NewDecoder(r.Body).Decode(v); err != nil {
+		return fmt.Errorf("invalid JSON format: %w", err)
 	}
-	hash := sha256.Sum256(jsonData)
-	return fmt.Sprintf("%x", hash), nil
+	return nil
 }
