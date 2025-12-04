@@ -35,6 +35,7 @@ func SetupAPI(Static embed.FS) http.Handler {
 		timeout := time.Duration(viper.GetInt("app.timeout")) * time.Second
 		r.Use(chimiddleware.Timeout(timeout))
 	}
+	r.Use(middleware.CORS)
 	r.Use(middleware.PrometheusMiddleware)
 	r.Use(middleware.Logger)
 

@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-// Get API base URL from environment variable, fallback to empty string (uses proxy in dev)
-const API_BASE_URL = import.meta.env.API_BASE_URL || ''
+// Get API base URL from window (injected at runtime) or environment variable, fallback to empty string
+const API_BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL !== undefined)
+	? window.API_BASE_URL
+	: (import.meta.env.VITE_API_BASE_URL || '')
 
 // Create axios instance with base configuration
 const apiClient = axios.create({

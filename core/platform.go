@@ -69,14 +69,38 @@ func SetupPlatform(Static embed.FS) http.Handler {
 		}
 		defer indexFile.Close()
 
-		stat, err := indexFile.Stat()
+		// Read the HTML content
+		htmlContent, err := io.ReadAll(indexFile)
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
+		// Get API base URL from environment variable or config
+		apiBaseURL := os.Getenv("API_BASE_URL")
+		if apiBaseURL == "" {
+			apiBaseURL = viper.GetString("app.api_base_url")
+		}
+
+		// Inject script tag to set API_BASE_URL before the main script loads
+		htmlStr := string(htmlContent)
+		if apiBaseURL != "" {
+			scriptTag := fmt.Sprintf(`<script>window.API_BASE_URL=%q;</script>`, apiBaseURL)
+			// Insert before the closing </head> tag
+			headCloseIdx := -1
+			for i := 0; i < len(htmlStr)-6; i++ {
+				if htmlStr[i:i+7] == "</head>" {
+					headCloseIdx = i
+					break
+				}
+			}
+			if headCloseIdx != -1 {
+				htmlStr = htmlStr[:headCloseIdx] + scriptTag + "\n    " + htmlStr[headCloseIdx:]
+			}
+		}
+
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		http.ServeContent(w, r, "index.html", stat.ModTime(), indexFile.(io.ReadSeeker))
+		w.Write([]byte(htmlStr))
 	})
 
 	return r
