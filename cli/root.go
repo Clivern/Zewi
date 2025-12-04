@@ -15,7 +15,7 @@ var config string
 
 var rootCmd = &cobra.Command{
 	Use: "zewi",
-	Short: `🐀 A Fast, Lightweight, S3 Compatible object storage, Set up in Minutes.
+	Short: `🐀 k8s in production
 
 If you have any suggestions, bug reports, or annoyances please report
 them to our issue tracker at <https://github.com/clivern/zewi/issues>`,

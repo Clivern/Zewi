@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/clivern/zewi/api"
-	"github.com/clivern/zewi/db"
 	"github.com/clivern/zewi/middleware"
 
 	"github.com/go-chi/chi/v5"
@@ -28,8 +27,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Setup creates and configures the HTTP server
-func Setup(Static embed.FS) http.Handler {
+// SetupLanding creates and configures the HTTP server for the landing page
+func SetupLanding(Static embed.FS) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(chimiddleware.Recoverer)
@@ -45,7 +44,6 @@ func Setup(Static embed.FS) http.Handler {
 		w.WriteHeader(http.StatusNoContent)
 	})
 	r.Get("/_health", api.HealthAction)
-	r.Get("/_ready", api.ReadyAction)
 	r.With(middleware.BasicAuth(
 		viper.GetString("app.metrics.username"),
 		viper.GetString("app.metrics.secret"),
@@ -84,36 +82,8 @@ func Setup(Static embed.FS) http.Handler {
 	return r
 }
 
-// InitDatabase initializes the database connection from configuration
-func InitDatabase() error {
-	dbConfig := db.Config{
-		Driver:          viper.GetString("app.database.driver"),
-		Host:            viper.GetString("app.database.host"),
-		Port:            viper.GetInt("app.database.port"),
-		Username:        viper.GetString("app.database.username"),
-		Password:        viper.GetString("app.database.password"),
-		Database:        viper.GetString("app.database.name"),
-		MaxOpenConns:    viper.GetInt("app.database.max_open_conns"),
-		MaxIdleConns:    viper.GetInt("app.database.max_idle_conns"),
-		ConnMaxLifetime: viper.GetInt("app.database.conn_max_lifetime"),
-		DataSource:      viper.GetString("app.database.datasource"),
-	}
-
-	return db.InitDB(dbConfig)
-}
-
-// Run starts the HTTP server with graceful shutdown support
-func Run(handler http.Handler) error {
-	if err := InitDatabase(); err != nil {
-		return fmt.Errorf("failed to initialize database: %w", err)
-	}
-
-	defer func() {
-		if err := db.CloseDB(); err != nil {
-			log.Error().Err(err).Msg("Error closing database connection")
-		}
-	}()
-
+// RunLanding starts the HTTP server for the landing page with graceful shutdown support
+func RunLanding(handler http.Handler) error {
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", strconv.Itoa(viper.GetInt("app.port"))),
 		Handler: handler,

@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var serverCmd = &cobra.Command{
-	Use:   "server",
-	Short: "Start the zewi backend server",
+var apiCmd = &cobra.Command{
+	Use:   "api",
+	Short: "Start the zewi API server",
 	Run: func(_ *cobra.Command, _ []string) {
 		// Load configuration
 		if err := core.Load(config); err != nil {
@@ -27,23 +27,23 @@ var serverCmd = &cobra.Command{
 		}
 
 		// Setup and configure the HTTP server
-		r := core.Setup(Static)
+		r := core.SetupAPI(Static)
 
 		// Run the server
-		if err := core.Run(r); err != nil {
+		if err := core.RunAPI(r); err != nil {
 			panic(fmt.Sprintf("Server error: %s", err.Error()))
 		}
 	},
 }
 
 func init() {
-	serverCmd.Flags().StringVarP(
+	apiCmd.Flags().StringVarP(
 		&config,
 		"config",
 		"c",
 		"config.prod.yml",
 		"Absolute path to config file (required)",
 	)
-	serverCmd.MarkFlagRequired("config")
-	rootCmd.AddCommand(serverCmd)
+	apiCmd.MarkFlagRequired("config")
+	rootCmd.AddCommand(apiCmd)
 }
