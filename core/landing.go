@@ -44,6 +44,7 @@ func SetupLanding(Static embed.FS) http.Handler {
 		w.WriteHeader(http.StatusNoContent)
 	})
 	r.Get("/_health", api.HealthAction)
+	r.Get("/_ready", api.HealthAction)
 	r.With(middleware.BasicAuth(
 		viper.GetString("app.metrics.username"),
 		viper.GetString("app.metrics.secret"),

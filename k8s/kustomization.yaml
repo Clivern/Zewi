@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: zewi
+
+resources:
+  - namespace.yaml
+  - configmap-staging-zewi-api.yaml
+  - configmap-staging-zewi-landing.yaml
+  - configmap-staging-zewi-platform.yaml
+  - deployment-staging-zewi-api.yaml
+  - deployment-staging-zewi-landing.yaml
+  - deployment-staging-zewi-platform.yaml
+  - service-staging-zewi-api.yaml
+  - service-staging-zewi-landing.yaml
+  - service-staging-zewi-platform.yaml
+  - ingress.yaml
