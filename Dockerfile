@@ -1,4 +1,4 @@
-FROM golang:1.25.5
+FROM golang:1.27.1
 
 ARG ZEWI_VERSION=0.6.1
 
